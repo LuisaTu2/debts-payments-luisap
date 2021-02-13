@@ -3,13 +3,6 @@ import json
 import sys
 from urllib.parse import urljoin
 
-'''
-def sum(arg):
-	total = 0 
-	for val in arg:
-		total += val
-	return total
-'''
 
 # outputs a list of dictionaries to stdout in JSON LINES format 
 def write_jsonl(items):
@@ -21,7 +14,7 @@ def write_jsonl(items):
 def get_resource(url):
 	try:
 		response = requests.get(url, verify=False, timeout=5)
-		if response.status_code  == 200:
+		if response.ok:
 			return response
 		else:
 			return None
@@ -37,13 +30,17 @@ def process_debts_payments():
 	payment_plans_url = urljoin(base_url, 'payment_plans')
 	payments_url = urljoin(base_url, 'payments')
 
-	print("\n\nDEBTS")
 	#write_jsonl(response)
 	debts = get_resource(debts_url)
-	print("\n\nPAYMENT PLANS")
 	payment_plans = get_resource(payment_plans_url)
-	print("\n\nPAYMENTS")
 	payments = get_resource(payments_url)
+	
+	print("\n\nDEBTS")
+	print(debts)
+	print("\n\nPAYMENT PLANS")
+	print(payment_plans)
+	print("\n\nPAYMENTS")
+	
 
 #process_debts_payments();
 

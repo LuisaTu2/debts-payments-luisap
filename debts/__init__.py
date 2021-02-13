@@ -20,12 +20,13 @@ def write_jsonl(items):
 		
 def get_resource(url):
 	try:
-		response = requests.get(url, verify=False, timeout=5).json()
-		write_jsonl(response)
-		return response
+		response = requests.get(url, verify=False, timeout=5)
+		if response.status_code == 200:
+			return response
+		else:
+			return None
 	except requests.exceptions.RequestException as e: #Check this
 		#raise Exception("Request from ", url, " failed.");
-		print("Something went wrong")
 		raise SystemExit(e)
 
 def process_debts_payments():
@@ -37,6 +38,7 @@ def process_debts_payments():
 	payments_url = urljoin(base_url, 'payments')
 
 	print("\n\nDEBTS")
+	#write_jsonl(response)
 	debts = get_resource(debts_url)
 	print("\n\nPAYMENT PLANS")
 	payment_plans = get_resource(payment_plans_url)

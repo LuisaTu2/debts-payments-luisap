@@ -21,7 +21,7 @@ def write_jsonl(items):
 def get_resource(url):
 	try:
 		response = requests.get(url, verify=False, timeout=5)
-		if response.status_code == 200:
+		if response.status_code  == 200:
 			return response
 		else:
 			return None
@@ -45,7 +45,7 @@ def process_debts_payments():
 	print("\n\nPAYMENTS")
 	payments = get_resource(payments_url)
 
-process_debts_payments();
+#process_debts_payments();
 
 
  

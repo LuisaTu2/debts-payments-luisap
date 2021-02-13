@@ -1,6 +1,7 @@
 import requests
 import json
 import sys
+from urllib.parse import urljoin
 
 '''
 def sum(arg):
@@ -31,9 +32,9 @@ def process_debts_payments():
 	
 	base_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/'
 	
-	debts_url = base_url + 'debts'
-	payment_plans_url = base_url + 'payment_plans'
-	payments_url = base_url + 'payments'
+	debts_url = urljoin(base_url, 'debts')
+	payment_plans_url = urljoin(base_url, 'payment_plans')
+	payments_url = urljoin(base_url, 'payments')
 
 	print("\n\nDEBTS")
 	debts = get_resource(debts_url)

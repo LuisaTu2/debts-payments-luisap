@@ -1,21 +1,27 @@
 import unittest
 from debts import get_resource
 #from debts import process_debts_payments
+from unittest.mock import patch
+from unittest.mock import Mock
 
-class TestSum(unittest.TestCase):
+class TestDebtsPayments(unittest.TestCase):
 	
-	def test_get_resource_is_successful(self):
-		base_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/'
-		urls = [base_url + 'debts', base_url + 'payment_plans', base_url + 'payments']			
-		
-	#def test_process_debts_payments(self):
-	#	testDebts = get_debts();
-	#	self.assertEqual(testDebts[0].status_code, 200);
+	@patch('debts.requests.get')
+	def test_get_resource_is_successful(self, mock_get):
+		#base_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/'
+		mock_get.return_value.status_code = 200
+		response = get_resource("")
+		self.assertTrue(mock_get.called)
+		self.assertEqual(response.status_code, 200)
 	
-	#def test_is_JSON_line(self):
-	#	data = [1,2,3];
-	#	result = sum(data);
-	#	self.assertEqual(result, 6, "Should be 6");
+	@patch('debts.requests.get')	
+	def test_get_resource_returns_none_when_not_200(self, mock_get):
+		#base_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/'
+		mock_get.return_value.status_code = 204
+		response = get_resource("")
+		self.assertTrue(mock_get.called)
+		self.assertIsNone(response)
+			
 	
 		
 if __name__ == '__main__':

@@ -29,7 +29,7 @@ def get_resource(url):
 		else:
 			return None
 	except Exception as e:
-		print(e)
+		#print("Exception: ", e)
 		return None
 
 def get_remaining_amount(payment_plan, payments):
@@ -39,7 +39,7 @@ def get_remaining_amount(payment_plan, payments):
 		remaining_amount = amount_to_pay - paid_amount;
 		return remaining_amount
 	except Exception as e:
-		print(e)
+		#print("Exception: ", e)
 		return None
 		
 
@@ -101,6 +101,6 @@ def main():
 		write_jsonl(result)
 	
 	
-main()
+#main()
  
 

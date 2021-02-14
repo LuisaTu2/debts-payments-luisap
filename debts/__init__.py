@@ -36,14 +36,12 @@ def process_debts_payments():
 				res.append(r)
 				#r['remaining_amount'] = 0;
 				#r['next_payment_due_date'] = 0;
-					
-				
+			
 		else:
 			print('There are no payment plans')
 				
 	write_jsonl(res)
 	
-# assert get data and all are called	
 def main():			
 	base_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/'
 
@@ -57,7 +55,6 @@ def main():
 	
 	return True
 
-#process_debts_payments();
 
 main()
  

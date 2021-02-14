@@ -1,24 +1,24 @@
 import unittest
 import requests
 import datetime
-from debts import main
-from debts import get_resource
-from debts import get_remaining_amount
-from debts import get_next_payment_due_date
-from debts import handler
+from main import main
+from main import get_resource
+from main import handler
+from main import get_remaining_amount
+from main import get_next_payment_due_date
 from unittest.mock import patch
 from unittest.mock import Mock, MagicMock
 
 class TestDebtsPayments(unittest.TestCase):
 	
 	# MAIN 
-	@patch('debts.get_resource')
+	@patch('main.get_resource')
 	def test_main_calls_get_resource(self, mock_get_resource):
 		main()
 		self.assertTrue(mock_get_resource.called)
 		self.assertTrue(mock_get_resource.call_count, 3)
 		
-	@patch('debts.handler')
+	@patch('main.handler')
 	def test_main_calls_get_resource(self, mock_handler):
 		main()
 		self.assertTrue(mock_handler.called)
@@ -107,12 +107,7 @@ class TestDebtsPayments(unittest.TestCase):
 		self.assertIsNone(None)
 	
 	
-	# HANDLER	
-	@patch('debts.handler')
-	def test_main_calls_process_data(self, mock_process_data):
-		response = main()
-		self.assertTrue(mock_process_data.called)
-		
+	# HANDLER		
 	def test_process_data_returns_none_on_none_or_empty_debts(self):
 		res1 = handler(None, Mock(), Mock())
 		self.assertIsNone(res1)
@@ -150,7 +145,7 @@ class TestDebtsPayments(unittest.TestCase):
 		response = get_resource('')
 		self.assertTrue(mock_get.called)
 		self.assertIsNone(response)
-			
+
 		
 if __name__ == '__main__':
 	unittest.main()

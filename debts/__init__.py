@@ -3,8 +3,8 @@ import json
 import sys
 import copy
 import functools
-from datetime import date, timedelta
 import dateutil.parser
+from datetime import date, timedelta
 from urllib.parse import urljoin
 
 base_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/'
@@ -47,18 +47,19 @@ def get_remaining_amount(payment_plan, payments):
 # Discrepancies can cause errors when comparing offset-naive and offset-aware datetimes 
 def get_next_payment_due_date(remaining_amount, payment_plan, payments):
 	try:
-		days_to_add = days_in_one_week if (payment_plan['installment_frequency'] == 'WEEKLY')  else days_in_two_weeks			
+		days_between_installments = days_in_one_week if (payment_plan['installment_frequency'] == 'WEEKLY')  else days_in_two_weeks			
 		start_date = dateutil.parser.parse(payment_plan['start_date'])
 		next_payment_due_date = start_date if remaining_amount > 0 else None
-		last_payment_date = dateutil.parser.parse(functools.reduce(lambda x, y: x if dateutil.parser.parse(x['date']) > dateutil.parser.parse(y['date']) else y, payments)['date'])
+		get_latest_payment_date = lambda x, y: x if dateutil.parser.parse(x['date']) > dateutil.parser.parse(y['date']) else y
+		last_payment_date = dateutil.parser.parse(functools.reduce(get_latest_payment_date, payments)['date'])
 		while next_payment_due_date is not None and next_payment_due_date <= last_payment_date and remaining_amount > 0:
-			next_payment_due_date = next_payment_due_date + timedelta(days = days_to_add) 
+			next_payment_due_date = next_payment_due_date + timedelta(days = days_between_installments) 
 		return next_payment_due_date
 	except Exception as e:
 		#print('Exception: ', e)
 		return None
 
-def process_data(debts, payment_plans, payments):
+def handler(debts, payment_plans, payments):
 	
 	if debts is None or len(debts) <= 0:
 		return None
@@ -95,7 +96,7 @@ def main():
 	payment_plans = get_resource(payment_plans_url)
 	payments = get_resource(payments_url)
 	
-	result = process_data(debts, payment_plans, payments)
+	result = handler(debts, payment_plans, payments)
 	
 	if result is not None:
 		write_jsonl(result)

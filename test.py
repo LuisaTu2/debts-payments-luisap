@@ -5,7 +5,7 @@ from debts import main
 from debts import get_resource
 from debts import get_remaining_amount
 from debts import get_next_payment_due_date
-from debts import process_data
+from debts import handler
 from unittest.mock import patch
 from unittest.mock import Mock, MagicMock
 
@@ -89,16 +89,17 @@ class TestDebtsPayments(unittest.TestCase):
 		test_payments = [ test_payment_1, test_payment_2 ]
 		res = get_next_payment_due_date(test_remaining_amount, test_payment_plan, test_payments)
 		self.assertIsNone(None)
-		
-	@patch('debts.process_data')
+	
+	# HANDLERS 	
+	@patch('debts.handler')
 	def test_main_calls_process_data(self, mock_process_data):
 		response = main()
 		self.assertTrue(mock_process_data.called)
 		
 	def test_process_data_returns_none_on_none_or_empty_debts(self):
-		res1 = process_data(None, Mock(), Mock())
+		res1 = handler(None, Mock(), Mock())
 		self.assertIsNone(res1)
-		res2 = process_data([], Mock(), Mock())
+		res2 = handler([], Mock(), Mock())
 		self.assertIsNone(res2)
 		
 	

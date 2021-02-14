@@ -23,29 +23,10 @@ def get_resource(url):
 		return None
 
 def process_debts_payments():
-	
-	base_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/'
-	
-	debts_url = urljoin(base_url, 'debts')
-	payment_plans_url = urljoin(base_url, 'payment_plans')
-	payments_url = urljoin(base_url, 'payments')
-
-	#write_jsonl(response)
-	debts = get_resource(debts_url)
-	payment_plans = get_resource(payment_plans_url)
-	payments = get_resource(payments_url)
-	
-	print('\n\nDEBTS')
-	print(debts)
-	print('\n\nPAYMENT PLANS')
-	print(payment_plans)
-	print('\n\nPAYMENTS')
-	print(payments)
-	print("\n\n****************************")
-	
+		
 	res = [];
 	
-	if debts is not None:
+	if debts is not None and len(debts) > 0:
 		if payment_plans is not None:
 			for debt in debts:
 				payment_plan = [payment_plan for payment_plan in payment_plans if payment_plan['debt_id'] == debt['id']]
@@ -60,11 +41,24 @@ def process_debts_payments():
 		else:
 			print('There are no payment plans')
 				
-	write_jsonl(res)		
+	write_jsonl(res)
 	
+# assert get data and all are called	
+def main():			
+	base_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/'
 
-process_debts_payments();
+	debts_url = urljoin(base_url, 'debts')
+	payment_plans_url = urljoin(base_url, 'payment_plans')
+	payments_url = urljoin(base_url, 'payments')
 
+	debts = get_resource(debts_url)		
+	payment_plans = get_resource(payment_plans_url)
+	payments = get_resource(payments_url)
+	
+	return True
 
+#process_debts_payments();
+
+main()
  
 

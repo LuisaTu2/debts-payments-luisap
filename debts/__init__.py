@@ -14,7 +14,7 @@ def write_jsonl(items):
 def get_resource(url):
 	try:
 		response = requests.get(url, verify=False, timeout=5)
-		if response.ok:
+		if response.status_code == 200:
 			return response
 		else:
 			return None

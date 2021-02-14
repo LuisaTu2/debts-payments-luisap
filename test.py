@@ -2,17 +2,30 @@ import unittest
 import requests
 from debts import main
 from debts import get_resource
+from debts import get_remaining_amount
 from debts import process_data
 from unittest.mock import patch
-from unittest.mock import Mock
+from unittest.mock import Mock, MagicMock
 
 class TestDebtsPayments(unittest.TestCase):
 	
 	@patch('debts.get_resource')
 	def test_main_calls_get_resource(self, mock_get_resource):
-		response = main()
+		main()
 		self.assertTrue(mock_get_resource.called)
 		self.assertTrue(mock_get_resource.call_count, 3)
+		
+	def test_get_remaining_amount_returns_float(self):
+		amount_to_pay = 100
+		p1 = 30.0
+		p2 = 22.6
+		test_payment_plan = {'amount_to_pay' : amount_to_pay}
+		test_payment_1 = { 'amount' : p1 }
+		test_payment_2 = { 'amount' : p2 }
+		test_payments = [ test_payment_1, test_payment_2 ]
+		res = get_remaining_amount(test_payment_plan, test_payments)
+		self.assertIsNotNone(res)
+		self.assertEqual(res, amount_to_pay - p1 - p2)
 		
 	@patch('debts.process_data')
 	def test_main_calls_process_data(self, mock_process_data):

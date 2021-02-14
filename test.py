@@ -2,7 +2,7 @@ import unittest
 import requests
 from debts import main
 from debts import get_resource
-from debts import process_debts_payments
+from debts import process_data
 from unittest.mock import patch
 from unittest.mock import Mock
 
@@ -10,9 +10,21 @@ class TestDebtsPayments(unittest.TestCase):
 	
 	@patch('debts.get_resource')
 	def test_main_calls_get_resource(self, mock_get_resource):
-		response = main();
+		response = main()
 		self.assertTrue(mock_get_resource.called)
 		self.assertTrue(mock_get_resource.call_count, 3)
+		
+	@patch('debts.process_data')
+	def test_main_calls_process_data(self, mock_process_data):
+		response = main()
+		self.assertTrue(mock_process_data.called)
+		
+	def test_process_data_returns_none_on_none_or_empty_debts(self):
+		res1 = process_data(None, Mock(), Mock())
+		self.assertIsNone(res1)
+		res2 = process_data([], Mock(), Mock())
+		self.assertIsNone(res2)
+		
 	
 	@patch('requests.get')
 	def test_get_resource_is_successful_on_200_response(self, mock_get):

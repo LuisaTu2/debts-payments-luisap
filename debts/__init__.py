@@ -22,25 +22,27 @@ def get_resource(url):
 		print(e)
 		return None
 
-def process_debts_payments():
-		
-	res = [];
+
+def process_data(debts, payment_plans, payments):
 	
-	if debts is not None and len(debts) > 0:
-		if payment_plans is not None:
-			for debt in debts:
-				payment_plan = [payment_plan for payment_plan in payment_plans if payment_plan['debt_id'] == debt['id']]
-				print(debt, len(payment_plan))
-				r = copy.deepcopy(debt);
-				r['is_in_payment_plan'] = len(payment_plan) > 0
-				res.append(r)
-				#r['remaining_amount'] = 0;
-				#r['next_payment_due_date'] = 0;
-			
-		else:
-			print('There are no payment plans')
-				
-	write_jsonl(res)
+	if debts is None or len(debts) <= 0:
+		return None
+		
+	res = []
+	
+	if payment_plans is not None:
+		for debt in debts:
+			payment_plan = [payment_plan for payment_plan in payment_plans if payment_plan['debt_id'] == debt['id']]
+			r = copy.deepcopy(debt);
+			r['is_in_payment_plan'] = len(payment_plan) > 0
+			res.append(r)
+			#r['remaining_amount'] = 0;
+			#r['next_payment_due_date'] = 0;
+		
+	else:
+		print('There are no payment plans')
+	
+
 	
 def main():			
 	base_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/'
@@ -53,9 +55,11 @@ def main():
 	payment_plans = get_resource(payment_plans_url)
 	payments = get_resource(payments_url)
 	
-	return True
-
-
+	process_data(debts, payment_plans, payments)
+	res = []
+	write_jsonl(res)
+	
+	
 main()
  
 

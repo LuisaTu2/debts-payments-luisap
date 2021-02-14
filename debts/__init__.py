@@ -9,7 +9,7 @@ def write_jsonl(items):
 	for item in items:
 		item_json = json.dumps(item)
 		sys.stdout.write(item_json)
-		sys.stdout.write("\n")
+		sys.stdout.write('\n')
 		
 def get_resource(url):
 	try:
@@ -18,9 +18,9 @@ def get_resource(url):
 			return response
 		else:
 			return None
-	except requests.exceptions.RequestException as e: #Check this
-		#raise Exception("Request from ", url, " failed.");
-		raise SystemExit(e)
+	except Exception as e:
+		print(e)
+		return None
 
 def process_debts_payments():
 	
@@ -35,11 +35,11 @@ def process_debts_payments():
 	payment_plans = get_resource(payment_plans_url)
 	payments = get_resource(payments_url)
 	
-	print("\n\nDEBTS")
+	print('\n\nDEBTS')
 	print(debts)
-	print("\n\nPAYMENT PLANS")
+	print('\n\nPAYMENT PLANS')
 	print(payment_plans)
-	print("\n\nPAYMENTS")
+	print('\n\nPAYMENTS')
 	
 
 #process_debts_payments();

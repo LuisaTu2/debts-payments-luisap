@@ -30,18 +30,16 @@ def process_data(debts, payment_plans, payments):
 		
 	res = []
 	
-	if payment_plans is not None:
-		for debt in debts:
+	for debt in debts:		
+		r = copy.deepcopy(debt);
+		payment_plan = []
+		if payment_plans is not None:
 			payment_plan = [payment_plan for payment_plan in payment_plans if payment_plan['debt_id'] == debt['id']]
-			r = copy.deepcopy(debt);
-			r['is_in_payment_plan'] = len(payment_plan) > 0
-			res.append(r)
-			#r['remaining_amount'] = 0;
-			#r['next_payment_due_date'] = 0;
-		
-	else:
-		print('There are no payment plans')
-	
+		r['is_in_payment_plan'] = len(payment_plan) > 0
+		res.append(r)
+		#r['remaining_amount'] = 0;
+		#r['next_payment_due_date'] = 0;
+
 
 	
 def main():			

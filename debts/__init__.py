@@ -42,10 +42,9 @@ def get_remaining_amount(payment_plan, payments):
 		#print('Exception: ', e)
 		return None
 
-# NOTE 
-# Dates are calculated with the assumption that all are provided in same format. 
+# NOTE : dates are calculated with the assumption that all are provided in same format. 
 # Discrepancies can cause errors when comparing offset-naive and offset-aware datetimes 
-def get_next_payment_due_date(remaining_amount, payment_plan, payments):
+def get_next_payment_due_date(remaining_amount, payment_plan, payments):	
 	try:
 		days_between_installments = days_in_one_week if (payment_plan['installment_frequency'] == 'WEEKLY')  else days_in_two_weeks			
 		start_date = dateutil.parser.parse(payment_plan['start_date'])
@@ -91,16 +90,13 @@ def handler(debts, payment_plans, payments):
 
 	
 def main():			
-
 	debts = get_resource(debts_url)		
 	payment_plans = get_resource(payment_plans_url)
 	payments = get_resource(payments_url)
-	
 	result = handler(debts, payment_plans, payments)
 	
 	if result is not None:
 		write_jsonl(result)
-	
-main()
- 
-
+	 
+if __name__ == '__main__':
+	main()

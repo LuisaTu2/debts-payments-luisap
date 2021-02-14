@@ -17,7 +17,23 @@ class TestDebtsPayments(unittest.TestCase):
 		main()
 		self.assertTrue(mock_get_resource.called)
 		self.assertTrue(mock_get_resource.call_count, 3)
+		
+	@patch('debts.handler')
+	def test_main_calls_get_resource(self, mock_handler):
+		main()
+		self.assertTrue(mock_handler.called)
+		self.assertTrue(mock_handler.call_count, 1)
 	
+	# GET_RESOURCE
+	def test_get_resource_returns_not_none_on_valid_url(self):
+		valid_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/debts'
+		result = get_resource(valid_url)
+		self.assertIsNotNone(result)
+		
+	def test_get_resource_returns_none_successful_on_invalid_url(self):
+		invalid_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/det'
+		result = get_resource(invalid_url)
+		self.assertIsNone(result)
 	
 	# GET_REMAINING_AMOUNT 
 	def test_get_remaining_amount_returns_valid_float(self):
@@ -90,7 +106,8 @@ class TestDebtsPayments(unittest.TestCase):
 		res = get_next_payment_due_date(test_remaining_amount, test_payment_plan, test_payments)
 		self.assertIsNone(None)
 	
-	# HANDLERS 	
+	
+	# HANDLER	
 	@patch('debts.handler')
 	def test_main_calls_process_data(self, mock_process_data):
 		response = main()
@@ -103,6 +120,7 @@ class TestDebtsPayments(unittest.TestCase):
 		self.assertIsNone(res2)
 		
 	
+	# GET REQUESTS	
 	@patch('requests.get')
 	def test_get_resource_is_successful_on_200_response(self, mock_get):
 		mock_get.return_value.status_code = 200
@@ -132,17 +150,6 @@ class TestDebtsPayments(unittest.TestCase):
 		response = get_resource('')
 		self.assertTrue(mock_get.called)
 		self.assertIsNone(response)
-	
-	def test_get_resource_returns_not_none_on_valid_url(self):
-		valid_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/debts'
-		result = get_resource(valid_url)
-		self.assertIsNotNone(result)
-		
-	def test_get_resource_returns_none_successful_on_invalid_url(self):
-		invalid_url = 'https://my-json-server.typicode.com/druska/trueaccord-mock-payments-api/det'
-		result = get_resource(invalid_url)
-		self.assertIsNone(result)
-	
 			
 		
 if __name__ == '__main__':

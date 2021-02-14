@@ -3,7 +3,6 @@ import json
 import sys
 from urllib.parse import urljoin
 
-
 # outputs a list of dictionaries to stdout in JSON LINES format 
 def write_jsonl(items):
 	for item in items:
@@ -15,7 +14,7 @@ def get_resource(url):
 	try:
 		response = requests.get(url, verify=False, timeout=5)
 		if response.status_code == 200:
-			return response
+			return response.json()
 		else:
 			return None
 	except Exception as e:
@@ -40,9 +39,24 @@ def process_debts_payments():
 	print('\n\nPAYMENT PLANS')
 	print(payment_plans)
 	print('\n\nPAYMENTS')
+	print(payments)
+	print("\n\n****************************")
+	
+	res = [];
+	
+	if debts is not None:
+		if payment_plans is not None:
+			for debt in debts:
+				payment_plan = [payment_plan for payment_plan in payment_plans if payment_plan['debt_id'] == debt['id']]
+				print(debt, len(payment_plan))
+				
+		else:
+			print('There are no payment plans')
+				
+			
 	
 
-#process_debts_payments();
+process_debts_payments();
 
 
  

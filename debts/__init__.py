@@ -1,6 +1,7 @@
 import requests
 import json
 import sys
+import copy
 from urllib.parse import urljoin
 
 # outputs a list of dictionaries to stdout in JSON LINES format 
@@ -49,11 +50,17 @@ def process_debts_payments():
 			for debt in debts:
 				payment_plan = [payment_plan for payment_plan in payment_plans if payment_plan['debt_id'] == debt['id']]
 				print(debt, len(payment_plan))
+				r = copy.deepcopy(debt);
+				r['is_in_payment_plan'] = len(payment_plan) > 0
+				res.append(r)
+				#r['remaining_amount'] = 0;
+				#r['next_payment_due_date'] = 0;
+					
 				
 		else:
 			print('There are no payment plans')
 				
-			
+	write_jsonl(res)		
 	
 
 process_debts_payments();

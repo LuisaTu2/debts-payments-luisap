@@ -14,7 +14,7 @@ payments_url = urljoin(base_url, 'payments')
 days_in_one_week = 7
 days_in_two_weeks = 14
 
-# outputs a list of dictionaries to stdout in JSON LINES format 
+# Outputs a list of dictionaries to stdout in JSON LINES format 
 def write_jsonl(items):
 	for item in items:
 		item_json = json.dumps(item)
@@ -69,7 +69,7 @@ def process_data(debts, payment_plans, payments):
 		d = copy.deepcopy(debt);
 		payment_plan = []
 		if payment_plans is not None:
-			# Get the payment plan for given debt if payment plan exists else return None
+			# Get the payment plan for given debt if exists else return None
 			payment_plan = next(iter([p for p in payment_plans if p['debt_id'] == debt['id']]), None)
 			is_in_payment_plan = payment_plan is not None
 			remaining_amount = None
@@ -79,19 +79,15 @@ def process_data(debts, payment_plans, payments):
 				payment_plan_id = payment_plan['id']
 				payments_history = list(filter(lambda p: p['payment_plan_id'] == payment_plan_id, payments))				
 				remaining_amount = get_remaining_amount(payment_plan, payments_history)
-				
-		
 				next_payment_due_date = get_next_payment_due_date(remaining_amount, payment_plan, payments_history)
 
 		d['is_in_payment_plan'] = is_in_payment_plan
 		d['remaining_amount'] = remaining_amount
-		# still in UTC but not with Z format
 		d['next_payment_due_date'] = None if next_payment_due_date is None else next_payment_due_date.isoformat()
-		#print(d)
 		res.append(d)
 		
 	return res
-		
+
 	
 def main():			
 
@@ -103,7 +99,6 @@ def main():
 	
 	if result is not None:
 		write_jsonl(result)
-	
 	
 main()
  

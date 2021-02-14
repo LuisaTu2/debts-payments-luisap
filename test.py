@@ -1,20 +1,25 @@
 import unittest
 import requests
+import datetime
 from debts import main
 from debts import get_resource
 from debts import get_remaining_amount
+from debts import get_next_payment_due_date
 from debts import process_data
 from unittest.mock import patch
 from unittest.mock import Mock, MagicMock
 
 class TestDebtsPayments(unittest.TestCase):
 	
+	# MAIN 
 	@patch('debts.get_resource')
 	def test_main_calls_get_resource(self, mock_get_resource):
 		main()
 		self.assertTrue(mock_get_resource.called)
 		self.assertTrue(mock_get_resource.call_count, 3)
-		
+	
+	
+	# GET_REMAINING_AMOUNT 
 	def test_get_remaining_amount_returns_valid_float(self):
 		amount_to_pay = 100
 		p1 = 30.0
@@ -25,7 +30,7 @@ class TestDebtsPayments(unittest.TestCase):
 		test_payments = [ test_payment_1, test_payment_2 ]
 		res = get_remaining_amount(test_payment_plan, test_payments)
 		self.assertIsNotNone(res)
-		self.assertEqual(res, amount_to_pay - p1 - p2)
+		self.assertAlmostEqual(res, amount_to_pay - p1 - p2)
 		
 	def test_get_remaining_amount_returns_none_on_invalid_payment_plan(self):
 		p1 = 30.0
@@ -46,6 +51,44 @@ class TestDebtsPayments(unittest.TestCase):
 		test_payments = [ test_payment_1, test_payment_2 ]
 		res = get_remaining_amount(test_payment_plan, test_payments)
 		self.assertIsNone(res)
+	
+	
+	# GET_NEXT_PAYMENT_DUE_DATE 
+	def test_get_next_payment_due_date_returns_valid_date(self):
+		test_remaining_amount = 500
+		test_payment_plan = { 'installment_frequency': 'WEEKLY', 'start_date' : '2020-09-01T16:18:30Z'  }
+		test_payment_1 = { 'date' : '2020-09-28T16:18:30Z' }
+		test_payment_2 = { 'date' : '2020-09-29T17:19:31Z' }
+		test_payments = [ test_payment_1, test_payment_2 ]
+		res = get_next_payment_due_date(test_remaining_amount, test_payment_plan, test_payments)
+		self.assertIsNotNone(res)
+		
+	def test_get_next_payment_due_date_returns_none_on_no_remaining_amount(self):
+		test_remaining_amount = 0
+		test_payment_plan = { 'installment_frequency': 'WEEKLY', 'start_date' : '2020-09-01T16:18:30Z'  }
+		test_payment_1 = { 'date' : '2020-09-28T16:18:30Z' }
+		test_payment_2 = { 'date' : '2020-09-29T17:19:31Z' }
+		test_payments = [ test_payment_1, test_payment_2 ]
+		res = get_next_payment_due_date(test_remaining_amount, test_payment_plan, test_payments)
+		self.assertIsNone(None)
+		
+	def test_get_next_payment_due_date_returns_none_on_invalid_payment_plan(self):
+		test_remaining_amount = 100
+		test_payment_plan = { 'installment_frequency': 'WEEKLY' }
+		test_payment_1 = { 'date' : '2020-09-28T16:18:30Z' }
+		test_payment_2 = { 'date' : '2020-09-29T17:19:31Z' }
+		test_payments = [ test_payment_1, test_payment_2 ]
+		res = get_next_payment_due_date(test_remaining_amount, test_payment_plan, test_payments)
+		self.assertIsNone(None)
+		
+	def test_get_next_payment_due_date_returns_none_on_invalid_payment(self):
+		test_remaining_amount = 100
+		test_payment_plan = { 'installment_frequency': 'WEEKLY', 'start_date' : '2020-09-01T16:18:30Z' }
+		test_payment_1 = { }
+		test_payment_2 = { 'date' : '2020-09-29T17:19:31Z' }
+		test_payments = [ test_payment_1, test_payment_2 ]
+		res = get_next_payment_due_date(test_remaining_amount, test_payment_plan, test_payments)
+		self.assertIsNone(None)
 		
 	@patch('debts.process_data')
 	def test_main_calls_process_data(self, mock_process_data):

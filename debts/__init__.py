@@ -29,7 +29,7 @@ def get_resource(url):
 		else:
 			return None
 	except Exception as e:
-		#print("Exception: ", e)
+		#print('Exception: ', e)
 		return None
 
 def get_remaining_amount(payment_plan, payments):
@@ -39,9 +39,24 @@ def get_remaining_amount(payment_plan, payments):
 		remaining_amount = amount_to_pay - paid_amount;
 		return remaining_amount
 	except Exception as e:
-		#print("Exception: ", e)
+		#print('Exception: ', e)
 		return None
-		
+
+# NOTE 
+# Dates are calculated with the assumption that all are provided in same format. 
+# Discrepancies can cause errors when comparing offset-naive and offset-aware datetimes 
+def get_next_payment_due_date(remaining_amount, payment_plan, payments):
+	try:
+		days_to_add = days_in_one_week if (payment_plan['installment_frequency'] == 'WEEKLY')  else days_in_two_weeks			
+		start_date = dateutil.parser.parse(payment_plan['start_date'])
+		next_payment_due_date = start_date if remaining_amount > 0 else None
+		last_payment_date = dateutil.parser.parse(functools.reduce(lambda x, y: x if dateutil.parser.parse(x['date']) > dateutil.parser.parse(y['date']) else y, payments)['date'])
+		while next_payment_due_date is not None and next_payment_due_date <= last_payment_date and remaining_amount > 0:
+			next_payment_due_date = next_payment_due_date + timedelta(days = days_to_add) 
+		return next_payment_due_date
+	except Exception as e:
+		#print('Exception: ', e)
+		return None
 
 def process_data(debts, payment_plans, payments):
 	
@@ -52,7 +67,6 @@ def process_data(debts, payment_plans, payments):
 	
 	for debt in debts:		
 		d = copy.deepcopy(debt);
-		print('\n\n\nDEBT: ', d)
 		payment_plan = []
 		if payment_plans is not None:
 			# Get the payment plan for given debt if payment plan exists else return None
@@ -66,18 +80,8 @@ def process_data(debts, payment_plans, payments):
 				payments_history = list(filter(lambda p: p['payment_plan_id'] == payment_plan_id, payments))				
 				remaining_amount = get_remaining_amount(payment_plan, payments_history)
 				
-				# Calculate the dates with the assumption that all dates are provided in ISO UTC format without any timezone offset
-				# otherwise can incur 'can't compare offset-naive and offset-aware datetimes' error
-				days_to_add = days_in_one_week if (payment_plan['installment_frequency'] == 'WEEKLY')  else days_in_two_weeks			
-				start_date = dateutil.parser.parse(payment_plan['start_date'])
-				next_payment_due_date = start_date if remaining_amount > 0 else next_payment_due_date
-				last_payment_date = dateutil.parser.parse(functools.reduce(lambda x, y: x if dateutil.parser.parse(x['date']) > dateutil.parser.parse(y['date']) else y, payments_history)['date'])
-				while next_payment_due_date is not None and next_payment_due_date <= last_payment_date and remaining_amount > 0:
-					next_payment_due_date = next_payment_due_date + timedelta(days = days_to_add) 
-				print('START DATE ', start_date, type(last_payment_date))
-				print('LAST PAYMENT DATE ', last_payment_date, type(last_payment_date))
-				print('INSTALLMENT FREQUENCY: ', payment_plan['installment_frequency'])
-				print('NEXT PAYMENT DUE DATE ', next_payment_due_date, type(next_payment_due_date))
+		
+				next_payment_due_date = get_next_payment_due_date(remaining_amount, payment_plan, payments_history)
 
 		d['is_in_payment_plan'] = is_in_payment_plan
 		d['remaining_amount'] = remaining_amount
@@ -101,6 +105,6 @@ def main():
 		write_jsonl(result)
 	
 	
-#main()
+main()
  
 

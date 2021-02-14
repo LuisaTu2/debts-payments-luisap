@@ -3,6 +3,7 @@ import json
 import sys
 import copy
 from urllib.parse import urljoin
+import functools
 
 # outputs a list of dictionaries to stdout in JSON LINES format 
 def write_jsonl(items):
@@ -31,14 +32,42 @@ def process_data(debts, payment_plans, payments):
 	res = []
 	
 	for debt in debts:		
-		r = copy.deepcopy(debt);
+		d = copy.deepcopy(debt);
+		print('\n\n\nDEBT: ', d)
 		payment_plan = []
 		if payment_plans is not None:
 			payment_plan = [payment_plan for payment_plan in payment_plans if payment_plan['debt_id'] == debt['id']]
-		r['is_in_payment_plan'] = len(payment_plan) > 0
-		res.append(r)
+			is_in_payment_plan = len(payment_plan) > 0
+			remaining_amount = None
+			#print('PAYMENT PLAN: ', payment_plan)
+			if payments is not None and is_in_payment_plan:
+				payment_plan_id = payment_plan[0]['id']
+				amount_to_pay = payment_plan[0]['amount_to_pay']
+				print('PAYMENT PLAN ID: ', payment_plan_id)
+				payments_on_debt = list(filter(lambda x: x['payment_plan_id'] == payment_plan_id, payments))
+				#paid_amount = functools.reduce(lambda x, y: x['amount'] + y['amount'], payments_on_debt) # Float obj is not subscriptable
+				paid_amount = sum([payment['amount'] for payment in payments_on_debt])			
+				remaining_amount = amount_to_pay - paid_amount;
+				#print("PAYMENTS MADE ON DEBT: ", payments_on_debt)
+				#print("PAID AMOUNT: ", paid_amount)
+				#print("REMAINING AMOUNT: ", remaining_amount)
+				
+				
+			else:
+				print('No payments were returned')
+		else:
+			print('No payment plans were returned')
+		d['is_in_payment_plan'] = is_in_payment_plan
+		d['remaining_amount'] = remaining_amount
+		print(d)
+		
+		
+		
 		#r['remaining_amount'] = 0;
 		#r['next_payment_due_date'] = 0;
+		
+		res.append(d)
+		
 
 
 	
@@ -54,8 +83,9 @@ def main():
 	payments = get_resource(payments_url)
 	
 	process_data(debts, payment_plans, payments)
-	res = []
-	write_jsonl(res)
+	
+	#res = []
+	#write_jsonl(res)
 	
 	
 main()

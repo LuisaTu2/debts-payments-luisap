@@ -1,28 +1,39 @@
 import unittest
 import requests
 import datetime
-from main import main
-from main import get_resource
-from main import handler
-from main import get_remaining_amount
-from main import get_next_payment_due_date
+from debts_assessor import main
+from debts_assessor import write_jsonl
+from debts_assessor import get_resource
+from debts_assessor import handler
+from debts_assessor import get_remaining_amount
+from debts_assessor import get_next_payment_due_date
 from unittest.mock import patch
 from unittest.mock import Mock
 
 class TestDebtsPayments(unittest.TestCase):
 	
 	# MAIN 
-	@patch('main.get_resource')
+	@patch('debts_assessor.get_resource')
 	def test_main_calls_get_resource(self, mock_get_resource):
 		main()
 		self.assertTrue(mock_get_resource.called)
 		self.assertTrue(mock_get_resource.call_count, 3)
 		
-	@patch('main.handler')
+	@patch('debts_assessor.handler')
 	def test_main_calls_get_resource(self, mock_handler):
 		main()
 		self.assertTrue(mock_handler.called)
 		self.assertTrue(mock_handler.call_count, 1)
+	
+	# WRITE_JSONL
+	def test_write_jsonl_successful_on_iterable_items(self):
+		items = []
+		self.assertRaises(Exception, write_jsonl(items))
+		
+	def test_write_jsonl_raises_exception_on_invalid_input_integer(self):
+		items = 10
+		self.assertRaises(Exception, write_jsonl(items))
+
 	
 	# GET_RESOURCE
 	def test_get_resource_returns_not_none_on_valid_url(self):

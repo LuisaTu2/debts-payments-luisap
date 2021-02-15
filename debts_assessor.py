@@ -16,10 +16,14 @@ days_in_two_weeks = 14
 
 # Outputs a list of dictionaries to stdout in JSON LINES format 
 def write_jsonl(items):
-	for item in items:
-		item_json = json.dumps(item)
-		sys.stdout.write(item_json)
-		sys.stdout.write('\n')
+	try:	
+		for item in items:
+			item_json = json.dumps(item)
+			sys.stdout.write(item_json)
+			sys.stdout.write('\n')
+	except Exception as e:
+		#print('Exception: ', e)
+		return
 		
 def get_resource(url):
 	try:

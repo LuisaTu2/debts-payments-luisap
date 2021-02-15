@@ -22,7 +22,6 @@ def write_jsonl(items):
 			sys.stdout.write(item_json)
 			sys.stdout.write('\n')
 	except Exception as e:
-		#print('Exception: ', e)
 		return
 		
 def get_resource(url):
@@ -33,7 +32,6 @@ def get_resource(url):
 		else:
 			return None
 	except Exception as e:
-		#print('Exception: ', e)
 		return None
 
 def get_remaining_amount(payment_plan, payments):
@@ -43,7 +41,6 @@ def get_remaining_amount(payment_plan, payments):
 		remaining_amount = amount_to_pay - paid_amount;
 		return remaining_amount
 	except Exception as e:
-		#print('Exception: ', e)
 		return None
 
 # NOTE : dates are calculated with the assumption that all are provided in same format. 
@@ -59,7 +56,6 @@ def get_next_payment_due_date(remaining_amount, payment_plan, payments):
 			next_payment_due_date = next_payment_due_date + timedelta(days = days_between_installments) 
 		return next_payment_due_date
 	except Exception as e:
-		#print('Exception: ', e)
 		return None
 
 def handler(debts, payment_plans, payments):
@@ -70,7 +66,6 @@ def handler(debts, payment_plans, payments):
 	try:
 		for debt in debts:		
 			d = copy.deepcopy(debt);
-			payment_plan = []
 			is_in_payment_plan = None
 			remaining_amount = None
 			next_payment_due_date = None
@@ -94,7 +89,6 @@ def handler(debts, payment_plans, payments):
 		return res
 	
 	except Exception as e:
-		#print('Exception: ', e)
 		return None		
 
 	

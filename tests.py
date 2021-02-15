@@ -15,7 +15,7 @@ class TestDebtsPayments(unittest.TestCase):
 	# MAIN 
 	@patch('debts_assessor.get_resource')
 	def test_main_calls_get_resource(self, mock_get_resource):
-		main()
+		main()	
 		self.assertTrue(mock_get_resource.called)
 		self.assertTrue(mock_get_resource.call_count, 3)
 		
@@ -24,6 +24,7 @@ class TestDebtsPayments(unittest.TestCase):
 		main()
 		self.assertTrue(mock_handler.called)
 		self.assertTrue(mock_handler.call_count, 1)
+	
 	
 	# WRITE_JSONL
 	def test_write_jsonl_successful_on_iterable_items(self):

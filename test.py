@@ -108,11 +108,24 @@ class TestDebtsPayments(unittest.TestCase):
 	
 	
 	# HANDLER		
-	def test_process_data_returns_none_on_none_or_empty_debts(self):
+	def test_handler_returns_none_on_empty_debts(self):
 		res1 = handler(None, Mock(), Mock())
 		self.assertIsNone(res1)
 		res2 = handler([], Mock(), Mock())
 		self.assertIsNone(res2)
+		
+	def test_handler_returns_valid_response(self):
+		test_debt_1 = { 'id' : 0, 'amount': 500.55 }
+		test_debt_2 = { 'id' : 1, 'amount': 123.455 }	
+		test_debt_3 = { 'id' : 2, 'amount': 21.55 }	
+		test_debts = [ test_debt_1, test_debt_2, test_debt_3]
+		test_payment_plan_1 = { 'id' : 0, 'debt_id': 0, 'amount_to_pay': 200.77, 'installment_amount': 10, 'installment_frequency': 'BI-WEEKLY', 'start_date' : '2020-09-01T16:18:30Z'  }
+		test_payment_plan_2 = { 'id' : 1, 'debt_id': 1, 'amount_to_pay': 99.66, 'installment_amount': 5.123, 'installment_frequency': 'WEEKLY', 'start_date' : '2020-03-01T16:18:30Z'  }
+		test_payment_plans = [ test_payment_plan_1, test_payment_plan_2 ]
+		test_payments = [ { 'amount' : 15, 'date': '2020-09-21T16:18:30Z', 'payment_plan_id': 0 }, { 'amount' : 45, 'date': '2020-09-22T16:18:30Z', 'payment_plan_id': 0 }, { 'amount' : 15, 'date': '2020-04-21T16:18:30Z', 'payment_plan_id': 1 } ]
+		res = handler(test_debts, test_payment_plans, test_payments)
+		self.assertIsNotNone(res)
+
 		
 	
 	# GET REQUESTS	

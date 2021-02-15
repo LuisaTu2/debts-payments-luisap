@@ -7,7 +7,7 @@ from main import handler
 from main import get_remaining_amount
 from main import get_next_payment_due_date
 from unittest.mock import patch
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 
 class TestDebtsPayments(unittest.TestCase):
 	

@@ -11,8 +11,7 @@ git clone https://github.com/LuisaTu2/debts-payments-luisap.git
 ```
 
 ## Usage
-Use git bash to navigate to the repo. 
-To run the application type:
+To run the application navigate to the repo and use the following command:
 ```python
 python -W ignore debts_assessor.py
 ```

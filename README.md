@@ -4,11 +4,18 @@ The debts assessor is a tool written in Python that provides a summary of debts,
 
 ## Installation
 
-Unzip or clone repo
+Unzip or clone repo:
 
 ```bash
 git clone https://github.com/LuisaTu2/debts-payments-luisap.git
 ```
+
+You might need to install the requests package:
+```bash
+pip install requests
+```
+
+
 
 ## Usage
 To run the application navigate to the repo and use the following command:

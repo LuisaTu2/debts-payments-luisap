@@ -99,7 +99,6 @@ def main():
 	payment_plans = get_resource(payment_plans_url)
 	payments = get_resource(payments_url)
 	result = handler(debts, payment_plans, payments)
-	
 	if result is not None:
 		write_jsonl(result)
 	 

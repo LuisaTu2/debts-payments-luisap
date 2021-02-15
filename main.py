@@ -61,32 +61,37 @@ def get_next_payment_due_date(remaining_amount, payment_plan, payments):
 def handler(debts, payment_plans, payments):
 	
 	if debts is None or len(debts) <= 0:
-		return None
-		
-	res = []
-	
-	for debt in debts:		
-		d = copy.deepcopy(debt);
-		payment_plan = []
-		if payment_plans is not None:
-			# Get the payment plan for given debt if exists else return None
-			payment_plan = next(iter([p for p in payment_plans if p['debt_id'] == debt['id']]), None)
-			is_in_payment_plan = payment_plan is not None
+		return None		
+	res = []	
+	try:
+		for debt in debts:		
+			d = copy.deepcopy(debt);
+			payment_plan = []
+			is_in_payment_plan = None
 			remaining_amount = None
 			next_payment_due_date = None
 			
-			if payments is not None and is_in_payment_plan:
-				payment_plan_id = payment_plan['id']
-				payments_history = list(filter(lambda p: p['payment_plan_id'] == payment_plan_id, payments))				
-				remaining_amount = get_remaining_amount(payment_plan, payments_history)
-				next_payment_due_date = get_next_payment_due_date(remaining_amount, payment_plan, payments_history)
+			if payment_plans is not None:
+				# Get the payment plan for given debt if exists else return None
+				payment_plan = next(iter([p for p in payment_plans if p['debt_id'] == debt['id']]), None)
+				is_in_payment_plan = payment_plan is not None
+				
+				if payments is not None and is_in_payment_plan:
+					payment_plan_id = payment_plan['id']
+					payments_history = list(filter(lambda p: p['payment_plan_id'] == payment_plan_id, payments))				
+					remaining_amount = get_remaining_amount(payment_plan, payments_history)
+					next_payment_due_date = get_next_payment_due_date(remaining_amount, payment_plan, payments_history)
 
-		d['is_in_payment_plan'] = is_in_payment_plan
-		d['remaining_amount'] = remaining_amount
-		d['next_payment_due_date'] = None if next_payment_due_date is None else next_payment_due_date.isoformat()
-		res.append(d)
-		
-	return res
+			d['is_in_payment_plan'] = is_in_payment_plan
+			d['remaining_amount'] = remaining_amount
+			d['next_payment_due_date'] = None if next_payment_due_date is None else next_payment_due_date.isoformat()
+			res.append(d)
+			
+		return res
+	
+	except Exception as e:
+		#print('Exception: ', e)
+		return None		
 
 	
 def main():			
